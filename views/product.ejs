@@ -1,3 +1,42 @@
 <h2>Showing Product: <%= product.name %></h2>
 
 <h5>Price: <%=product.price %></h5>
+
+<div id="reviewsList">
+  <img src="/images/loading.gif" id="reviewsListLoading" />
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    const url = "http://localhost:4000/products/<%= product.id %>/reviews"
+
+    fetch(url)
+      .then(response => response.json())
+      .then((respData) => {
+
+        const loader = document.getElementById("reviewsListLoading")
+        loader.remove()
+
+        if (respData.data.length > 0 ) {
+          const list = document.createElement("ul")
+  
+          respData.data.forEach(function(item) {
+            const li = document.createElement("li")
+            li.innerHTML = `Review: ${item.content} \n Star: ${item.content}`
+            list.appendChild(li)
+          })
+
+          const el = document.getElementById("reviewsList")
+          el.appendChild(list)
+
+        } else {
+          const el = document.getElementById("reviewsList")
+          el.innerHTML = "No Reviews for this product yet "
+        }
+
+      })
+      .catch(err => {
+        console.log("ajax call failed: ", err)
+      })
+  });
+</script>
